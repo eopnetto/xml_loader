@@ -9,6 +9,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -42,6 +43,20 @@ class Shipto {
      * @ORM\Column(type="string", length=255)
      */
     private $country;
+
+    /**
+     * One Shipto has Many Shiporders.
+     * @ORM\OneToMany(targetEntity="Shiporder", mappedBy="shipto")
+     */
+    private $shiporders;
+
+    public function __construct() {
+        $this->shiporders = new ArrayCollection();
+    }
+
+    public function getShiporders() {
+        return $this->shiporders;
+    }
 
     /**
      * Get shitoid

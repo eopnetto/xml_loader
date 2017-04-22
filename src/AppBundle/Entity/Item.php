@@ -24,7 +24,7 @@ class Item {
     private $itemid;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $orderid;
 
@@ -48,14 +48,25 @@ class Item {
      */
     private $price;
 
+    /**
+     * Many Items have One Shiporder.
+     * @ORM\ManyToOne(targetEntity="Shiporder", inversedBy="items")
+     * @ORM\JoinColumn(name="orderid", referencedColumnName="orderid")
+     */
+    private $shiporder;
+
+    public function setShiporder($shiporder) {
+        $this->shiporder = $shiporder;
+
+        return $this;
+    }
 
     /**
      * Get itemid
      *
      * @return integer 
      */
-    public function getItemid()
-    {
+    public function getItemid() {
         return $this->itemid;
     }
 
@@ -65,8 +76,7 @@ class Item {
      * @param integer $orderid
      * @return Item
      */
-    public function setOrderid($orderid)
-    {
+    public function setOrderid($orderid) {
         $this->orderid = $orderid;
 
         return $this;
@@ -77,8 +87,7 @@ class Item {
      *
      * @return integer 
      */
-    public function getOrderid()
-    {
+    public function getOrderid() {
         return $this->orderid;
     }
 
@@ -88,8 +97,7 @@ class Item {
      * @param string $title
      * @return Item
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->title = $title;
 
         return $this;
@@ -100,8 +108,7 @@ class Item {
      *
      * @return string 
      */
-    public function getTitle()
-    {
+    public function getTitle() {
         return $this->title;
     }
 
@@ -111,8 +118,7 @@ class Item {
      * @param string $note
      * @return Item
      */
-    public function setNote($note)
-    {
+    public function setNote($note) {
         $this->note = $note;
 
         return $this;
@@ -123,8 +129,7 @@ class Item {
      *
      * @return string 
      */
-    public function getNote()
-    {
+    public function getNote() {
         return $this->note;
     }
 
@@ -134,8 +139,7 @@ class Item {
      * @param integer $quantity
      * @return Item
      */
-    public function setQuantity($quantity)
-    {
+    public function setQuantity($quantity) {
         $this->quantity = $quantity;
 
         return $this;
@@ -146,8 +150,7 @@ class Item {
      *
      * @return integer 
      */
-    public function getQuantity()
-    {
+    public function getQuantity() {
         return $this->quantity;
     }
 
@@ -157,8 +160,7 @@ class Item {
      * @param float $price
      * @return Item
      */
-    public function setPrice($price)
-    {
+    public function setPrice($price) {
         $this->price = $price;
 
         return $this;
@@ -169,8 +171,8 @@ class Item {
      *
      * @return float 
      */
-    public function getPrice()
-    {
+    public function getPrice() {
         return $this->price;
     }
+
 }

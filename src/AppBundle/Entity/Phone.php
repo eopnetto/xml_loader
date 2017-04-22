@@ -9,6 +9,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Person;
 
 /**
  * @ORM\Entity
@@ -24,7 +25,7 @@ class Phone {
     private $phoneid;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $personid;
 
@@ -33,14 +34,25 @@ class Phone {
      */
     private $phone;
 
+    /**
+     * Many Phones have One Person.
+     * @ORM\ManyToOne(targetEntity="Person", inversedBy="phones")
+     * @ORM\JoinColumn(name="personid", referencedColumnName="personid")
+     */
+    private $person;
+
+    public function setPerson($person) {
+        $this->person = $person;
+
+        return $this;
+    }
 
     /**
      * Get phoneid
      *
      * @return integer 
      */
-    public function getPhoneid()
-    {
+    public function getPhoneid() {
         return $this->phoneid;
     }
 
@@ -50,8 +62,7 @@ class Phone {
      * @param integer $personid
      * @return Phone
      */
-    public function setPersonid($personid)
-    {
+    public function setPersonid($personid) {
         $this->personid = $personid;
 
         return $this;
@@ -62,8 +73,7 @@ class Phone {
      *
      * @return integer 
      */
-    public function getPersonid()
-    {
+    public function getPersonid() {
         return $this->personid;
     }
 
@@ -73,8 +83,7 @@ class Phone {
      * @param string $phone
      * @return Phone
      */
-    public function setPhone($phone)
-    {
+    public function setPhone($phone) {
         $this->phone = $phone;
 
         return $this;
@@ -85,8 +94,8 @@ class Phone {
      *
      * @return string 
      */
-    public function getPhone()
-    {
+    public function getPhone() {
         return $this->phone;
     }
+
 }

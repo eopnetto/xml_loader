@@ -1,13 +1,8 @@
-app:
-    resource: '@AppBundle/Controller/'
-    type: annotation
-        
 people:
     type:     rest
-    prefix:   /api
     resource: AppBundle\Controller\PeopleController
 
 phones:
     type:     rest
-#    parent:   people
+    parent:   people
     resource: AppBundle\Controller\PhonesController

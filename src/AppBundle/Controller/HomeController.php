@@ -44,7 +44,8 @@ class HomeController extends FOSRestController {
                 return $this->handleView($view);
             }
         } catch (\Exception $exc) {
-            
+            var_dump($exc->getMessage());
+            var_dump($exc->getLine());
         }
 
         $view = $this->view([
@@ -95,8 +96,9 @@ class HomeController extends FOSRestController {
                         $phones = $person->getElementsByTagName('phone');
                         foreach ($phones as $phone) {
                             $phoneObj = new \AppBundle\Entity\Phone();
-                            $phoneObj->setPersonid($personObj->getPersonid());
                             $phoneObj->setPhone($phone->nodeValue);
+                            $personObj->getPhones()->add($phoneObj);
+                            $phoneObj->setPerson($personObj);
                             $em->persist($phoneObj);
                             $em->flush();
                         }
@@ -107,6 +109,8 @@ class HomeController extends FOSRestController {
                 return $people;
             }
         } catch (\Exception $exc) {
+            var_dump($exc->getMessage());
+            var_dump($exc->getLine());
             $em->getConnection()->rollBack();
         }
     }
@@ -121,11 +125,14 @@ class HomeController extends FOSRestController {
                     $orderid = $shiporder->getElementsByTagName('orderid')->item(0)->nodeValue;
                     $repository = $this->getDoctrine()->getRepository('AppBundle:Shiporder');
                     $shiporderObj = $repository->find($orderid);
+                    $personObj = $this->getDoctrine()->getRepository('AppBundle:Person')->find($shiporder->getElementsByTagName('orderperson')->item(0)->nodeValue);
 
-                    if (is_null($shiporderObj)) {
+                    if (is_null($shiporderObj) && $personObj) {
                         $shiporderObj = new \AppBundle\Entity\Shiporder();
                         $shiporderObj->setOrderid($orderid);
-                        $shiporderObj->setOrderperson($shiporder->getElementsByTagName('orderperson')->item(0)->nodeValue);
+//                        $shiporderObj->setPersonid($shiporder->getElementsByTagName('orderperson')->item(0)->nodeValue);
+                        $personObj->getShiporders()->add($shiporderObj);
+                        $shiporderObj->setPerson($personObj);
                         $em->persist($shiporderObj);
                         $em->flush();
 
@@ -139,7 +146,9 @@ class HomeController extends FOSRestController {
                             $em->persist($shiptoObj);
                             $em->flush();
 
-                            $shiporderObj->setShiptoid($shiptoObj->getShiptoid());
+//                            $shiporderObj->setShiptoid($shiptoObj->getShiptoid());
+                            $shiptoObj->getShiporders()->add($shiporderObj);
+                            $shiporderObj->setShipto($shiptoObj);
                             $em->persist($shiporderObj);
                             $em->flush();
                         }
@@ -147,12 +156,15 @@ class HomeController extends FOSRestController {
                         $items = $shiporder->getElementsByTagName('item');
                         foreach ($items as $item) {
                             $itemObj = new \AppBundle\Entity\Item();
-                            $itemObj->setOrderid($shiporderObj->getOrderid());
+//                            $itemObj->setOrderid($shiporderObj->getOrderid());
                             $itemObj->setTitle($item->getElementsByTagName('title')->item(0)->nodeValue);
                             $itemObj->setNote($item->getElementsByTagName('note')->item(0)->nodeValue);
                             $itemObj->setQuantity($item->getElementsByTagName('quantity')->item(0)->nodeValue);
                             $itemObj->setPrice($item->getElementsByTagName('price')->item(0)->nodeValue);
 
+
+                            $shiporderObj->getItems()->add($itemObj);
+                            $itemObj->setShiporder($shiporderObj);
                             $em->persist($itemObj);
                             $em->flush();
                         }

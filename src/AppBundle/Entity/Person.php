@@ -9,6 +9,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Phone;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -27,6 +29,31 @@ class Person {
      * @ORM\Column(type="string", length=100)
      */
     private $personname;
+
+    /**
+     * One Person has Many Phones.
+     * @ORM\OneToMany(targetEntity="Phone", mappedBy="person")
+     */
+    private $phones;
+
+    /**
+     * One Person has Many Shiporders.
+     * @ORM\OneToMany(targetEntity="Shiporder", mappedBy="person")
+     */
+    private $shiporders;
+
+    public function __construct() {
+        $this->phones = new ArrayCollection();
+        $this->shiporders = new ArrayCollection();
+    }
+
+    public function getPhones() {
+        return $this->phones;
+    }
+
+    public function getShiporders() {
+        return $this->shiporders;
+    }
 
     /**
      * Get personid

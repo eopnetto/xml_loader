@@ -9,6 +9,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -23,14 +24,54 @@ class Shiporder {
     private $orderid;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $orderperson;
+    private $personid;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $shiptoid;
+
+    /**
+     * Many Shiporders have One Person.
+     * @ORM\ManyToOne(targetEntity="Person", inversedBy="shiporders")
+     * @ORM\JoinColumn(name="personid", referencedColumnName="personid")
+     */
+    private $person;
+
+    public function setPerson($person) {
+        $this->person = $person;
+
+        return $this;
+    }
+
+    /**
+     * Many Shiporders have One Shipto.
+     * @ORM\ManyToOne(targetEntity="Shipto", inversedBy="shiporders")
+     * @ORM\JoinColumn(name="shiptoid", referencedColumnName="shiptoid")
+     */
+    private $shipto;
+
+    public function setShipto($shipto) {
+        $this->shipto = $shipto;
+
+        return $this;
+    }
+
+    /**
+     * One Shipto has Many Items.
+     * @ORM\OneToMany(targetEntity="Item", mappedBy="shiporder")
+     */
+    private $items;
+
+    public function __construct() {
+        $this->items = new ArrayCollection();
+    }
+
+    public function getItems() {
+        return $this->items;
+    }
 
     /**
      * Set orderperson
@@ -54,24 +95,24 @@ class Shiporder {
     }
 
     /**
-     * Set orderperson
+     * Set personid
      *
-     * @param integer $orderperson
+     * @param integer $personid
      * @return Shiporder
      */
-    public function setOrderperson($orderperson) {
-        $this->orderperson = $orderperson;
+    public function setPersonid($personid) {
+        $this->personid = $personid;
 
         return $this;
     }
 
     /**
-     * Get orderperson
+     * Get personid
      *
      * @return integer 
      */
-    public function getOrderperson() {
-        return $this->orderperson;
+    public function getPersonid() {
+        return $this->personid;
     }
 
     /**

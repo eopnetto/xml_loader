@@ -26,7 +26,11 @@ php app/console doctrine:schema:update --force
 php app/console server:run
 
 It's done!
+<<<<<<< HEAD
 Now access the url http://localhost:8000/ and upload your xml file and the files will be processed and database will be populate.
+=======
+Now access the url http://localhost:8000/ and upload your xml file and the files will be processed and database will be populat.
+>>>>>>> e78071db4e5c398e65bceb0ae5078a6add743fca
 Now you can access data from REST API url:
 
 E.g.:

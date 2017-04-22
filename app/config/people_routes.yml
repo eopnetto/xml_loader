@@ -6,3 +6,10 @@ phones:
     type:     rest
     parent:   people
     resource: AppBundle\Controller\PhonesController
+    name_prefix:  api_
+
+shiporders:
+    type:     rest
+    parent:   people
+    resource: AppBundle\Controller\ShipordersController
+    name_prefix:  api_

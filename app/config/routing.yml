@@ -1,13 +1,8 @@
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
-        
-people:
-    type:     rest
-    prefix:   /api
-    resource: AppBundle\Controller\PeopleController
 
-phones:
-    type:     rest
-#    parent:   people
-    resource: AppBundle\Controller\PhonesController
+acme_hello:
+    type: rest
+    prefix: /api
+    resource: "people_routes.yml"

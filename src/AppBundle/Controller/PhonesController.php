@@ -42,22 +42,5 @@ class PhonesController extends Controller {
     }
 
 // "get_phone"   [GET] /phones/{phoneid}
-//=======================================================
-//    public function newPhonesAction($personid) {
-//        
-//    }
-//
-//// "new_person_phones"   [GET] /people/{personid}/phones/new
-//
-//    public function editPhoneAction($personid, $phoneid) {
-//        
-//    }
-//
-//// "edit_person_phone"   [GET] /people/{personid}/phones/{phoneid}/edit
-//
-//    public function removePhoneAction($personid, $phoneid) {
-//        
-//    }
-//
-//// "remove_person_phone" [GET] /people/{personid}/phones/{phoneid}/remove
+
 }

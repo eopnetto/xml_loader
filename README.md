@@ -5,7 +5,7 @@ Run the following commands:
 
 - git clone https://github.com/eopnetto/xml_loader
 - cd xml_loader/
-- composer install
+- composer install (fill the params that will be requested with your configurations)
 
 ## Doctrine Configuration
 Then set your mysql credentials in "xml_loader\app\config\config.yml" file:
@@ -29,7 +29,7 @@ Finish executing the following commands:
 - php app/console doctrine:schema:update --force
 - php app/console server:run
 
-It's done! Now access the url http://localhost:8000/ and upload your xml file and the files will be processed and database will be populate.
+It's done! Now access the url http://localhost:8000/ (or other url where the server is running) and upload your xml file and the files will be processed and database will be populate.
 
 Now you can access data from REST API url:
 

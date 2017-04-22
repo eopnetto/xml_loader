@@ -42,10 +42,15 @@ class HomeController extends FOSRestController {
                         ->setTemplateVar('data');
 
                 return $this->handleView($view);
+            } else {
+                return $this->handleView($this->view([
+                                            'success' => false,
+                                            'message' => '<b>Ops!</b> There\'s no person registered'
+                                                ], 200)
+                                        ->setTemplate("_alert.twig")
+                                        ->setTemplateVar('data'));
             }
         } catch (\Exception $exc) {
-            var_dump($exc->getMessage());
-            var_dump($exc->getLine());
         }
 
         $view = $this->view([
@@ -66,10 +71,10 @@ class HomeController extends FOSRestController {
         if (is_file($this->UPLOAD_DIR . '/' . $uploadedFile->getClientOriginalName())) {
             $doc->load($this->UPLOAD_DIR . '/' . $uploadedFile->getClientOriginalName());
 
-            $this->processPerson($doc);
-            $this->processShiporder($doc);
+            $processPersonResult = $this->processPerson($doc);
+            $processShiporderResult = $this->processShiporder($doc);
 
-            return true;
+            return ($processPersonResult || $processShiporderResult);
         }
         return false;
     }
@@ -109,10 +114,9 @@ class HomeController extends FOSRestController {
                 return $people;
             }
         } catch (\Exception $exc) {
-            var_dump($exc->getMessage());
-            var_dump($exc->getLine());
             $em->getConnection()->rollBack();
         }
+        return false;
     }
 
     public function processShiporder($doc) {
@@ -122,60 +126,63 @@ class HomeController extends FOSRestController {
             if ($shiporders) {
                 $em->getConnection()->beginTransaction();
                 foreach ($shiporders as $shiporder) {
-                    $orderid = $shiporder->getElementsByTagName('orderid')->item(0)->nodeValue;
-                    $repository = $this->getDoctrine()->getRepository('AppBundle:Shiporder');
-                    $shiporderObj = $repository->find($orderid);
                     $personObj = $this->getDoctrine()->getRepository('AppBundle:Person')->find($shiporder->getElementsByTagName('orderperson')->item(0)->nodeValue);
+                    if ($personObj) {
+                        $orderid = $shiporder->getElementsByTagName('orderid')->item(0)->nodeValue;
+                        $repository = $this->getDoctrine()->getRepository('AppBundle:Shiporder');
+                        $shiporderObj = $repository->find($orderid);
 
-                    if (is_null($shiporderObj) && $personObj) {
-                        $shiporderObj = new \AppBundle\Entity\Shiporder();
-                        $shiporderObj->setOrderid($orderid);
-//                        $shiporderObj->setPersonid($shiporder->getElementsByTagName('orderperson')->item(0)->nodeValue);
-                        $personObj->getShiporders()->add($shiporderObj);
-                        $shiporderObj->setPerson($personObj);
-                        $em->persist($shiporderObj);
-                        $em->flush();
 
-                        $shipto = $shiporder->getElementsByTagName('shipto')->item(0);
-                        if ($shipto) {
-                            $shiptoObj = new \AppBundle\Entity\Shipto();
-                            $shiptoObj->setName($shipto->getElementsByTagName('name')->item(0)->nodeValue);
-                            $shiptoObj->setAddress($shipto->getElementsByTagName('address')->item(0)->nodeValue);
-                            $shiptoObj->setCity($shipto->getElementsByTagName('city')->item(0)->nodeValue);
-                            $shiptoObj->setCountry($shipto->getElementsByTagName('country')->item(0)->nodeValue);
-                            $em->persist($shiptoObj);
-                            $em->flush();
-
-//                            $shiporderObj->setShiptoid($shiptoObj->getShiptoid());
-                            $shiptoObj->getShiporders()->add($shiporderObj);
-                            $shiporderObj->setShipto($shiptoObj);
+                        if (is_null($shiporderObj)) {
+                            $shiporderObj = new \AppBundle\Entity\Shiporder();
+                            $shiporderObj->setOrderid($orderid);
+                            $personObj->getShiporders()->add($shiporderObj);
+                            $shiporderObj->setPerson($personObj);
                             $em->persist($shiporderObj);
                             $em->flush();
-                        }
 
-                        $items = $shiporder->getElementsByTagName('item');
-                        foreach ($items as $item) {
-                            $itemObj = new \AppBundle\Entity\Item();
+                            $shipto = $shiporder->getElementsByTagName('shipto')->item(0);
+                            if ($shipto) {
+                                $shiptoObj = new \AppBundle\Entity\Shipto();
+                                $shiptoObj->setName($shipto->getElementsByTagName('name')->item(0)->nodeValue);
+                                $shiptoObj->setAddress($shipto->getElementsByTagName('address')->item(0)->nodeValue);
+                                $shiptoObj->setCity($shipto->getElementsByTagName('city')->item(0)->nodeValue);
+                                $shiptoObj->setCountry($shipto->getElementsByTagName('country')->item(0)->nodeValue);
+                                $em->persist($shiptoObj);
+                                $em->flush();
+
+//                            $shiporderObj->setShiptoid($shiptoObj->getShiptoid());
+                                $shiptoObj->getShiporders()->add($shiporderObj);
+                                $shiporderObj->setShipto($shiptoObj);
+                                $em->persist($shiporderObj);
+                                $em->flush();
+                            }
+
+                            $items = $shiporder->getElementsByTagName('item');
+                            foreach ($items as $item) {
+                                $itemObj = new \AppBundle\Entity\Item();
 //                            $itemObj->setOrderid($shiporderObj->getOrderid());
-                            $itemObj->setTitle($item->getElementsByTagName('title')->item(0)->nodeValue);
-                            $itemObj->setNote($item->getElementsByTagName('note')->item(0)->nodeValue);
-                            $itemObj->setQuantity($item->getElementsByTagName('quantity')->item(0)->nodeValue);
-                            $itemObj->setPrice($item->getElementsByTagName('price')->item(0)->nodeValue);
+                                $itemObj->setTitle($item->getElementsByTagName('title')->item(0)->nodeValue);
+                                $itemObj->setNote($item->getElementsByTagName('note')->item(0)->nodeValue);
+                                $itemObj->setQuantity($item->getElementsByTagName('quantity')->item(0)->nodeValue);
+                                $itemObj->setPrice($item->getElementsByTagName('price')->item(0)->nodeValue);
 
 
-                            $shiporderObj->getItems()->add($itemObj);
-                            $itemObj->setShiporder($shiporderObj);
-                            $em->persist($itemObj);
-                            $em->flush();
+                                $shiporderObj->getItems()->add($itemObj);
+                                $itemObj->setShiporder($shiporderObj);
+                                $em->persist($itemObj);
+                                $em->flush();
+                            }
                         }
                     }
                 }
+                $em->getConnection()->commit();
             }
-            $em->getConnection()->commit();
-            return $shiporders;
+            return (isset($shiporderObj)) ? $shiporders : false;
         } catch (\Exception $exc) {
             $em->getConnection()->rollBack();
         }
+        return false;
     }
 
 }

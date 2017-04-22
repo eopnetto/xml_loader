@@ -4,12 +4,16 @@ people:
 
 phones:
     type:     rest
-    parent:   people
     resource: AppBundle\Controller\PhonesController
-    name_prefix:  api_
-
+    
 shiporders:
     type:     rest
-    parent:   people
     resource: AppBundle\Controller\ShipordersController
-    name_prefix:  api_
+    
+shiptos:
+    type:     rest
+    resource: AppBundle\Controller\ShiptosController
+
+items:
+    type:     rest
+    resource: AppBundle\Controller\ItemsController

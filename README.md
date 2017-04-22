@@ -37,3 +37,11 @@ E.g.:
 * http://localhost:8000/api/people/1
 * http://localhost:8000/api/people/1/phones
 * http://localhost:8000/api/people/1/phones/1
+* http://localhost:8000/api/people/1/shiporders
+* http://localhost:8000/api/shiporders
+* http://localhost:8000/api/shiporders/1
+* http://localhost:8000/api/shiporders/1/items
+* http://localhost:8000/api/shiporders/1/items/1
+* http://localhost:8000/api/shiptos/1
+* http://localhost:8000/api/shiptos/1/shiporders
+* http://localhost:8000/api/items/1

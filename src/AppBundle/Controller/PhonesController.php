@@ -11,64 +11,37 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class PhonesController extends Controller {
 
-    public function getPhonesAction($personid) {
-        $person = $this->getDoctrine()
-                ->getRepository('AppBundle:Person')
-                ->find($personid);
+    public function getPhonesAction() {
+        $phones = $this->getDoctrine()
+                ->getRepository('AppBundle:Phone')
+                ->findAll();
 
-        if ($person) {
-            $phones = $person->getPhones();
-
-            if (!$phones) {
-                throw $this->createNotFoundException(
-                        'No phones found for personid ' . $personid
-                );
-            }
-        } else {
+        if (!$phones) {
             throw $this->createNotFoundException(
-                    'No person found for id ' . $personid
+                    'No phones found'
             );
         }
 
         return $phones;
     }
 
-// "get_person_phones"   [GET] /people/{personid}/phones
+// "get_phones"   [GET] /phones
 
-    public function getPhoneAction($personid, $phoneid) {
-        $person = $this->getDoctrine()
-                ->getRepository('AppBundle:Person')
-                ->find($personid);
+    public function getPhoneAction($phoneid) {
+        $phone = $this->getDoctrine()
+                ->getRepository('AppBundle:Phone')
+                ->find($phoneid);
 
-        if ($person) {
-            $phones = $person->getPhones();
-
-            if (!$phones) {
-                throw $this->createNotFoundException(
-                        'No phones found for personid ' . $personid
-                );
-            }
-
-            foreach ($phones as $value) {
-                if ($value->getPhoneid() == $phoneid)
-                    $phone = $value;
-            }
-
-            if (!isset($phone)) {
-                throw $this->createNotFoundException(
-                        "Person $personid has no phone found for id  $phoneid"
-                );
-            }
-        } else {
+        if (!$phone) {
             throw $this->createNotFoundException(
-                    'No person found for id ' . $personid
+                    'No phone found for id ' . $phoneid
             );
         }
 
         return $phone;
     }
 
-    // "get_person_phone"    [GET] /people/{personid}/phones/{phoneid}
+// "get_phone"   [GET] /phones/{phoneid}
 //=======================================================
 //    public function newPhonesAction($personid) {
 //        

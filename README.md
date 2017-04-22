@@ -25,6 +25,7 @@ doctrine:
 
 Finish executing the following commands:
 
+- php app/console doctrine:database:create
 - php app/console doctrine:schema:update --force
 - php app/console server:run
 
